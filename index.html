@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Biblioteca</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background-color: #007bff;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        .search-bar {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .search-bar input[type="text"] {
+            flex-grow: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px 0 0 5px;
+            outline: none;
+            height: 20px;
+            margin-top: 10%;
+        }
+        .search-bar button {
+            padding: 10px;
+            background-color: #0056b3;
+            border: none;
+            color: white;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+        }
+        .button {
+            background-color: #0056b3;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            margin: 10px 0;
+            transition: background 0.3s ease;
+            border-radius: 5px;
+            display: block;
+        }
+        .button:hover {
+            background-color: #003a70;
+        }
+        .content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 20px;  /* Adicionado para espaçamento interno */
+            width: calc(100% - 250px);  /* Ajuste para levar em conta a largura do sidebar */
+            overflow: auto;  /* Garante que o conteúdo seja rolável se exceder a altura da tela */
+        }
+        
+        /* Estilizações adicionais para a tabela dentro do #resultadoBusca */
+        #resultadoBusca table {
+            width: 100%; /* Ajuste a largura para cobrir a área de conteúdo */
+            margin-top: 20px; /* Espaço entre o formulário de busca e a tabela */
+            border-collapse: collapse; /* Remove espaços entre as células */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* Sombra leve para destacar a tabela */
+        }
+
+        #resultadoBusca th, #resultadoBusca td {
+            padding: 10px; /* Mais espaço dentro de cada célula */
+            text-align: left; /* Alinhamento do texto à esquerda */
+            border-bottom: 1px solid #ccc; /* Linha de separação entre as linhas */
+        }
+
+        #resultadoBusca th {
+            background-color: #007bff; /* Cor de fundo para cabeçalho da tabela */
+            color: white; /* Cor do texto para cabeçalho da tabela */
+        }
+
+        #resultadoBusca tr:nth-child(even) {
+            background-color: #f2f2f2; /* Cores alternadas para linhas */
+        }
+
+        #resultadoBusca tr:hover {
+            background-color: #e8f0fe; /* Cor de fundo ao passar o mouse */
+        }
+
+        h1 {
+            margin: 0 0 20px 0;  /* Adiciona margem abaixo do título para separar do conteúdo */
+            font-size: 32px;
+            color: #333;
+        }
+
+        h1 span {
+            font-size: 48px;
+        }
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Evento de input para busca em tempo real
+            $('#termoBusca').on('input', function() {
+                var termoBusca = $(this).val(); // Pega o valor atual do campo de texto
+                if (termoBusca.length >= 2) { // Realiza a busca se tiver pelo menos 2 caracteres
+                    $.ajax({
+                        url: 'buscarLivros.php',
+                        type: 'POST',
+                        data: { termoBusca: termoBusca },
+                        success: function(data) {
+                            $('#resultadoBusca').html(data);
+                        }
+                    });
+                } else {
+                    $('#resultadoBusca').html(''); // Limpa os resultados se o texto é muito curto
+                }
+            });
+    
+            // Evento de clique para mostrar todos os livros
+            $('#mostrarTodos').on('click', function() {
+                $.ajax({
+                    url: 'buscarLivros.php', // O mesmo script PHP pode ser usado
+                    type: 'POST',
+                    data: { termoBusca: 'all' }, // Envia um termo que indica a requisição de todos os livros
+                    success: function(data) {
+                        $('#resultadoBusca').html(data);
+                    }
+                });
+            });
+        });
+    </script>
+    
+        
+</head>
+<body>
+    <div class="sidebar">   
+        <div class="search-bar">
+            <form>
+                <input type="text" id="termoBusca" name="termoBusca" placeholder="Pesquisar 🔍">
+                <button type="button" id="mostrarTodos">Mostrar Todos os livros</button>
+            </form>
+        </div>
+        <a href="cadastroAutor/index.php" class="button">Cadastrar Autor 📚</a>
+        <a href="cadastroLivro/index.php" class="button">Cadastrar Livro 📖</a>
+        <a href="livroGenero/index.php" class="button">Cadastrar Gênero 🏷️</a>
+    </div>
+    <div class="content">
+        <h1><span>📚</span> Menu Biblioteca <span>📖</span></h1>
+        <div id="resultadoBusca"></div>
+    </div>
+</body>
+</html>
